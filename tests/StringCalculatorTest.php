@@ -9,5 +9,33 @@ use PHPUnit\Framework\TestCase;
 
 final class StringCalculatorTest extends TestCase
 {
-    // TODO: String Calculator Kata Tests
+    /**
+     * @test
+     **/
+    public function returnZeroIfVoidStringIsPassed()
+    {
+        $stringCalculator = new StringCalculator();
+
+        $this->assertEquals(0, $stringCalculator->add(""));
+    }
+
+    /**
+     * @test
+     **/
+    public function returnNumberIfOneNumberStringIsPassed()
+    {
+        $stringCalculator = new StringCalculator();
+
+        $this->assertEquals(1, $stringCalculator->add("1"));
+    }
+
+    /**
+     * @test
+     **/
+    public function returnAddResultIfTwoNumbersStringIsPassed()
+    {
+        $stringCalculator = new StringCalculator();
+
+        $this->assertEquals(3, $stringCalculator->add("1,2"));
+    }
 }
