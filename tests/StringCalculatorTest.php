@@ -38,4 +38,16 @@ final class StringCalculatorTest extends TestCase
 
         $this->assertEquals(3, $stringCalculator->add("1,2"));
     }
+
+    /**
+     * @test
+     **/
+    public function returnAddResultIfMultipleNumbersStringIsPassed()
+    {
+        $stringCalculator = new StringCalculator();
+
+        $this->assertEquals(6, $stringCalculator->add("1,2,3"));
+        $this->assertEquals(10, $stringCalculator->add("1,2,3,4"));
+        $this->assertEquals(15, $stringCalculator->add("1,2,3,4,5"));
+    }
 }
