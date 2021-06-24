@@ -89,4 +89,14 @@ final class StringCalculatorTest extends TestCase
         }
         $this->fail('Exception not catch!');
     }
+
+    /**
+     * @test
+     */
+    public function ignoreNumbersIfAreBiggerThanOneThousand()
+    {
+        $stringCalculator = new StringCalculator();
+
+        $this->assertEquals(2, $stringCalculator->add("2,1001"));
+    }
 }

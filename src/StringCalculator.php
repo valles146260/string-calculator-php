@@ -27,7 +27,9 @@ class StringCalculator
             if ($numberValue < 0) {
                 array_push($negatives, $numberValue);
             }
-            $add += $numberValue;
+            if ($numberValue <= 1000) {
+                $add += $numberValue;
+            }
             $number = strtok($delimiter);
         }
         if (count($negatives)) {
