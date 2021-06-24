@@ -2,8 +2,13 @@
 
 namespace Deg540\StringCalculatorPHP;
 
+use Exception;
+
 class StringCalculator
 {
+    /**
+     * @throws Exception
+     */
     public function add(string $numbers): int
     {
         if ($numbers === "") {
@@ -15,10 +20,18 @@ class StringCalculator
             $numbers = substr($numbers, 4);
         }
         $add = 0;
+        $negatives = array();
         $number = strtok($numbers, $delimiter);
         while ($number !== false) {
-            $add += intval($number);
+            $numberValue = intval($number);
+            if ($numberValue < 0) {
+                array_push($negatives, $numberValue);
+            }
+            $add += $numberValue;
             $number = strtok($delimiter);
+        }
+        if (count($negatives)) {
+            throw new Exception("Negativos no soportados: " . implode(", ", $negatives));
         }
         return $add;
     }
