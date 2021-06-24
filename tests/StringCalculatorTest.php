@@ -60,4 +60,16 @@ final class StringCalculatorTest extends TestCase
 
         $this->assertEquals(6, $stringCalculator->add("1\n2,3"));
     }
+
+    /**
+     * @test
+     **/
+    public function changeDelimiterIfNumbersStringWithDelimiterSeparateLineIsPassed()
+    {
+        $stringCalculator = new StringCalculator();
+
+        $this->assertEquals(3, $stringCalculator->add("//;\n1;2"));
+        $this->assertEquals(10, $stringCalculator->add("//(\n1(2(3(4"));
+        $this->assertEquals(15, $stringCalculator->add("//?\n1?2?3?4?5"));
+    }
 }
