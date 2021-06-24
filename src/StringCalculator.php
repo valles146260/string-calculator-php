@@ -10,8 +10,10 @@ class StringCalculator
             return 0;
         }
         $add = 0;
-        foreach (explode(",", $numbers) as &$number) {
+        $number = strtok($numbers, ",\n");
+        while ($number !== false) {
             $add += intval($number);
+            $number = strtok(",\n");
         }
         return $add;
     }
