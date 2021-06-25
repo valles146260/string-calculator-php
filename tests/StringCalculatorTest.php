@@ -10,52 +10,52 @@ use PHPUnit\Framework\TestCase;
 
 final class StringCalculatorTest extends TestCase
 {
-    /**
-     * @test
-     **/
-    public function returnZeroIfVoidStringIsPassed()
-    {
-        $stringCalculator = new StringCalculator();
+    private StringCalculator $stringCalculator;
 
-        $this->assertEquals(0, $stringCalculator->add(""));
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->stringCalculator = new StringCalculator();
     }
 
     /**
      * @test
      **/
-    public function returnNumberIfOneNumberStringIsPassed()
+    public function totalIsZeroIfEmptyText()
     {
-        $stringCalculator = new StringCalculator();
-
-        $this->assertEquals(1, $stringCalculator->add("1"));
+        $this->assertEquals(0, $this->stringCalculator->add(""));
     }
 
     /**
      * @test
      **/
-    public function returnAddResultIfTwoNumbersStringIsPassed()
+    public function totalIsNumberIfOneNumberText()
     {
-        $stringCalculator = new StringCalculator();
-
-        $this->assertEquals(3, $stringCalculator->add("1,2"));
+        $this->assertEquals(1, $this->stringCalculator->add("1"));
     }
 
     /**
      * @test
      **/
-    public function returnAddResultIfMultipleNumbersStringIsPassed()
+    public function addsTwoNumbers()
     {
-        $stringCalculator = new StringCalculator();
-
-        $this->assertEquals(6, $stringCalculator->add("1,2,3"));
-        $this->assertEquals(10, $stringCalculator->add("1,2,3,4"));
-        $this->assertEquals(15, $stringCalculator->add("1,2,3,4,5"));
+        $this->assertEquals(3, $this->stringCalculator->add("1,2"));
     }
 
     /**
      * @test
      **/
-    public function returnAddResultIfNumbersStringWithBreakLinesIsPassed()
+    public function addsMultipleNumbers()
+    {
+        $this->assertEquals(6, $this->stringCalculator->add("1,2,3"));
+        $this->assertEquals(10, $this->stringCalculator->add("1,2,3,4"));
+        $this->assertEquals(15, $this->stringCalculator->add("1,2,3,4,5"));
+    }
+
+    /**
+     * @test
+     **/
+    public function usesBreakLinesAsDelimiter()
     {
         $stringCalculator = new StringCalculator();
 
@@ -65,7 +65,7 @@ final class StringCalculatorTest extends TestCase
     /**
      * @test
      **/
-    public function changeDelimiterIfNumbersStringWithDelimiterSeparateLineIsPassed()
+    public function changesDelimiter()
     {
         $stringCalculator = new StringCalculator();
 
@@ -77,26 +77,43 @@ final class StringCalculatorTest extends TestCase
     /**
      * @test
      */
-    public function returnExceptionIfNegativeNumbersStringIsPassed()
+    public function checksNegativeNumbers()
     {
         $stringCalculator = new StringCalculator();
 
-        try {
-            $stringCalculator->add("//?\n1?-2?3?-4?-5");
-        } catch (Exception $exception) {
-            $this->assertEquals("Negativos no soportados: -2, -4, -5", $exception->getMessage());
-            return;
-        }
-        $this->fail('Exception not catch!');
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Negativos no soportados: -5, -2, -4");
+
+        $stringCalculator->add("//?\n1?-2?3?-4?-5");
     }
 
     /**
      * @test
      */
-    public function ignoreNumbersIfAreBiggerThanOneThousand()
+    public function ignoreNumbersGreaterThanOneThousand()
     {
         $stringCalculator = new StringCalculator();
 
         $this->assertEquals(2, $stringCalculator->add("2,1001"));
+    }
+
+    /**
+     * @test
+     */
+    public function changesToLongDelimiter()
+    {
+        $stringCalculator = new StringCalculator();
+
+        $this->assertEquals(6, $stringCalculator->add("//[delim]\n1delim2delim3"));
+    }
+
+    /**
+     * @test
+     */
+    public function changesToShortDelimiter()
+    {
+        $stringCalculator = new StringCalculator();
+
+        $this->assertEquals(6, $stringCalculator->add("//[]\n12***3"));
     }
 }
