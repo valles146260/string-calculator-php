@@ -57,9 +57,7 @@ final class StringCalculatorTest extends TestCase
      **/
     public function usesBreakLinesAsDelimiter()
     {
-        $stringCalculator = new StringCalculator();
-
-        $this->assertEquals(6, $stringCalculator->add("1\n2,3"));
+        $this->assertEquals(6, $this->stringCalculator->add("1\n2,3"));
     }
 
     /**
@@ -67,11 +65,9 @@ final class StringCalculatorTest extends TestCase
      **/
     public function changesDelimiter()
     {
-        $stringCalculator = new StringCalculator();
-
-        $this->assertEquals(3, $stringCalculator->add("//;\n1;2"));
-        $this->assertEquals(10, $stringCalculator->add("//(\n1(2(3(4"));
-        $this->assertEquals(15, $stringCalculator->add("//?\n1?2?3?4?5"));
+        $this->assertEquals(3, $this->stringCalculator->add("//;\n1;2"));
+        $this->assertEquals(10, $this->stringCalculator->add("//(\n1(2(3(4"));
+        $this->assertEquals(15, $this->stringCalculator->add("//?\n1?2?3?4?5"));
     }
 
     /**
@@ -79,12 +75,10 @@ final class StringCalculatorTest extends TestCase
      */
     public function checksNegativeNumbers()
     {
-        $stringCalculator = new StringCalculator();
-
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Negativos no soportados: -5, -2, -4");
 
-        $stringCalculator->add("//?\n1?-2?3?-4?-5");
+        $this->stringCalculator->add("//?\n1?-2?3?-4?-5");
     }
 
     /**
@@ -92,9 +86,7 @@ final class StringCalculatorTest extends TestCase
      */
     public function ignoreNumbersGreaterThanOneThousand()
     {
-        $stringCalculator = new StringCalculator();
-
-        $this->assertEquals(2, $stringCalculator->add("2,1001"));
+        $this->assertEquals(2, $this->stringCalculator->add("2,1001"));
     }
 
     /**
@@ -102,9 +94,7 @@ final class StringCalculatorTest extends TestCase
      */
     public function changesToLongDelimiter()
     {
-        $stringCalculator = new StringCalculator();
-
-        $this->assertEquals(6, $stringCalculator->add("//[delim]\n1delim2delim3"));
+        $this->assertEquals(6, $this->stringCalculator->add("//[delim]\n1delim2delim3"));
     }
 
     /**
@@ -112,8 +102,15 @@ final class StringCalculatorTest extends TestCase
      */
     public function changesToShortDelimiter()
     {
-        $stringCalculator = new StringCalculator();
+        $this->assertEquals(6, $this->stringCalculator->add("//[]\n12***3"));
+    }
 
-        $this->assertEquals(6, $stringCalculator->add("//[]\n12***3"));
+    /**
+     * @test
+     */
+    public function addsMultipleDelimiters()
+    {
+        $this->assertEquals(6, $this->stringCalculator->add("//[][%]\n12%3"));
+        $this->assertEquals(6, $this->stringCalculator->add("//[*][.]\n1*2.3"));
     }
 }

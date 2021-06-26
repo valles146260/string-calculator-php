@@ -6,6 +6,8 @@ use Exception;
 
 class StringCalculator
 {
+    const MAX_NUMBER_ALLOWED = 1000;
+
     private array $defaultDelimiters = [",", "\n"];
 
     /**
@@ -18,9 +20,7 @@ class StringCalculator
         }
 
         $delimiters = $this->extractDelimiters($numbers);
-        $splitNumbers = $this->split($numbers, $delimiters);
-
-        return $this->textAddition($splitNumbers);
+        return $this->operate($numbers, $delimiters);
     }
 
     private function extractDelimiters(string &$string): array
@@ -28,16 +28,32 @@ class StringCalculator
         $delimiters = $this->defaultDelimiters;
 
         if (preg_match("/\/\/.\n.*/", $string)) {
+            $delimiters = [];
             $delimiters[] = substr($string, 2, 1);
             $string = substr($string, 4);
         }
-        if (preg_match("/\/\/\[.*\]\n.*/", $string)) {
-            $delimiterEndPosition = strrpos($string, ']');
-            $delimiters[] = substr($string, 3, $delimiterEndPosition - 3);
-            $string = substr($string, $delimiterEndPosition + 2);
+        if (preg_match("/\/\/(\[[^]]*\])*\n.*/", $string)) {
+            $delimiters = [];
+            $delimiterStartPosition = strpos($string, '[');
+            $delimiterEndPosition = strpos($string, ']');
+            while ($delimiterEndPosition !== false) {
+                $delimiters[] = substr($string, $delimiterStartPosition + 1, $delimiterEndPosition - ($delimiterStartPosition + 1));
+                $string = substr($string, $delimiterEndPosition + 1);
+                $delimiterStartPosition = strpos($string, '[');
+                $delimiterEndPosition = strpos($string, ']');
+            }
         }
 
         return $delimiters;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function operate(string $numbers, array $delimiters): int
+    {
+        $splitNumbers = $this->split($numbers, $delimiters);
+        return $this->getTotal($splitNumbers);
     }
 
     private function split(string $numbers, array $delimiters): array
@@ -47,6 +63,7 @@ class StringCalculator
         foreach ($delimiters as $delimiter) {
             for ($i=0; $i < count($splitNumbers); $i++) {
                 $piece = array_shift($splitNumbers);
+
                 if ($delimiter === "") {
                     $splitNumbers = array_merge($splitNumbers, str_split($piece));
                 } else {
@@ -61,30 +78,19 @@ class StringCalculator
     /**
      * @throws Exception
      */
-    private function textAddition(array $numbers): int
+    private function getTotal(array $numbers): int
     {
         $total = 0;
 
-        $numbers = $this->stringToIntArray($numbers);
+        $numbers = array_map("intval", $numbers);
         $this->checkNegatives($numbers);
         foreach ($numbers as $number) {
-            if ($number <= 1000) {
+            if ($number <= self::MAX_NUMBER_ALLOWED) {
                 $total += $number;
             }
         }
 
         return $total;
-    }
-
-    private function stringToIntArray(array $stringArray): array
-    {
-        $intArray = [];
-
-        foreach ($stringArray as $value) {
-            $intArray[] = intval($value);
-        }
-
-        return $intArray;
     }
 
     /**
