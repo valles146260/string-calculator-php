@@ -113,4 +113,13 @@ final class StringCalculatorTest extends TestCase
         $this->assertEquals(6, $this->stringCalculator->add("//[][%]\n12%3"));
         $this->assertEquals(6, $this->stringCalculator->add("//[*][.]\n1*2.3"));
     }
+
+    /**
+     * @test
+     */
+    public function addsMultipleLongDelimiter()
+    {
+        $this->assertEquals(15, $this->stringCalculator->add("//[delim][??]\n1delim2??3delim4delim5"));
+        $this->assertEquals(10, $this->stringCalculator->add("//[??][¿¿]\n1??2¿¿3¿¿4¿5"));
+    }
 }
