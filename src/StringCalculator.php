@@ -8,43 +8,25 @@ class StringCalculator
 {
     const MAX_NUMBER_ALLOWED = 1000;
 
-    private array $defaultDelimiters = [",", "\n"];
-
     /**
      * @throws Exception
      */
     public function add(string $numbers): int
     {
-        if ($numbers === "") {
+        if (empty($numbers)) {
             return 0;
         }
-
         $delimiters = $this->extractDelimiters($numbers);
+        $numbers = array_pop($delimiters);
+
         return $this->operate($numbers, $delimiters);
     }
 
-    private function extractDelimiters(string &$string): array
+    private function extractDelimiters(string $string): array
     {
-        $delimiters = $this->defaultDelimiters;
+        $delimitersCalculator = new RulesDelimitersCalculator();
 
-        if (preg_match("/\/\/.\n.*/", $string)) {
-            $delimiters = [];
-            $delimiters[] = substr($string, 2, 1);
-            $string = substr($string, 4);
-        }
-        if (preg_match("/\/\/(\[[^]]*\])*\n.*/", $string)) {
-            $delimiters = [];
-            $delimiterStartPosition = strpos($string, '[');
-            $delimiterEndPosition = strpos($string, ']');
-            while ($delimiterEndPosition !== false) {
-                $delimiters[] = substr($string, $delimiterStartPosition + 1, $delimiterEndPosition - ($delimiterStartPosition + 1));
-                $string = substr($string, $delimiterEndPosition + 1);
-                $delimiterStartPosition = strpos($string, '[');
-                $delimiterEndPosition = strpos($string, ']');
-            }
-        }
-
-        return $delimiters;
+        return $delimitersCalculator->delimitersCalculator($string);
     }
 
     /**
@@ -53,6 +35,7 @@ class StringCalculator
     private function operate(string $numbers, array $delimiters): int
     {
         $splitNumbers = $this->split($numbers, $delimiters);
+
         return $this->getTotal($splitNumbers);
     }
 
