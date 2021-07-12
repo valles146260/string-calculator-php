@@ -26,7 +26,7 @@ class StringCalculator
     {
         $delimitersCalculator = new RulesDelimitersCalculator();
 
-        return $delimitersCalculator->delimitersCalculator($string);
+        return $delimitersCalculator->calculateDelimiters($string);
     }
 
     /**

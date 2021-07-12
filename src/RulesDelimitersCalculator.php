@@ -14,7 +14,7 @@ class RulesDelimitersCalculator implements IDelimitersCalculator
         $this->rules[] = new MultipleDelimitersRule();
     }
 
-    public function delimitersCalculator(string $string): array
+    public function calculateDelimiters(string $string): array
     {
         $delimiters = new Delimiters();
 

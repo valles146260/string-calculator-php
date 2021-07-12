@@ -4,5 +4,5 @@ namespace Deg540\StringCalculatorPHP;
 
 interface IDelimitersCalculator
 {
-    public function delimitersCalculator(string $string): array;
+    public function calculateDelimiters(string $string): array;
 }
