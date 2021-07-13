@@ -14,24 +14,25 @@ class RulesDelimitersCalculator implements IDelimitersCalculator
         $this->rules[] = new MultipleDelimitersRule();
     }
 
-    public function calculateDelimiters(string $string): array
+    public function processString(string $string): ProcessedString
     {
+        $processedString = new ProcessedString();
         $delimiters = new Delimiters();
 
         foreach ($this->rules as $rule)
         {
-            $extractedDelimiters = $rule->extractDelimiters($string);
-            if (!empty($extractedDelimiters))
-            {
-                $delimiters->update($extractedDelimiters);
+            $ruleProcessedString = $rule->extractDelimiters($string);
+            if (!$ruleProcessedString->isEmpty()) {
+                $processedString = $ruleProcessedString;
             }
         }
-        if ($delimiters->isEmpty())
+        if ($processedString->isEmpty())
         {
             $delimiters->update(self::DEFAULT_DELIMITERS);
-            $delimiters->add($string);
+            $processedString->setDelimiters($delimiters);
+            $processedString->processNumbers($string);
         }
 
-        return $delimiters->toArray();
+        return $processedString;
     }
 }

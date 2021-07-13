@@ -4,22 +4,18 @@ namespace Deg540\StringCalculatorPHP;
 
 class SingleDelimiterRule implements IDelimitersRule
 {
-    private Delimiters $delimiters;
-
-    public function __construct()
+    public function extractDelimiters(string $string): ProcessedString
     {
-        $this->delimiters = new Delimiters();
-    }
-
-    public function extractDelimiters(string $string): array
-    {
+        $processedString = new ProcessedString();
+        $delimiters = new Delimiters();
         if ($this->isSingleCharacterDelimiter($string)) {
-            $this->delimiters->delete();
-            $this->delimiters->add($this->extractDelimiter($string));
-            $this->delimiters->add($this->extractNumbers($string));
+            $delimiters->delete();
+            $delimiters->add($this->extractDelimiter($string));
+            $processedString->setDelimiters($delimiters);
+            $processedString->processNumbers($this->extractNumbers($string));
         }
 
-        return $this->delimiters->toArray();
+        return $processedString;
     }
 
     private function isSingleCharacterDelimiter(string $string): bool

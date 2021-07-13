@@ -16,56 +16,26 @@ class StringCalculator
         if (empty($numbers)) {
             return 0;
         }
-        $delimiters = $this->extractDelimiters($numbers);
-        $numbers = array_pop($delimiters);
+        $processedString= $this->extractDelimiters($numbers);
+        $numbers = $processedString->getNumbers()->toArrayOfIntegers();
 
-        return $this->operate($numbers, $delimiters);
+        return $this->operate($numbers);
     }
 
-    private function extractDelimiters(string $string): array
+    private function extractDelimiters(string $string): ProcessedString
     {
         $delimitersCalculator = new RulesDelimitersCalculator();
 
-        return $delimitersCalculator->calculateDelimiters($string);
+        return $delimitersCalculator->processString($string);
     }
 
     /**
      * @throws Exception
      */
-    private function operate(string $numbers, array $delimiters): int
-    {
-        $splitNumbers = $this->split($numbers, $delimiters);
-
-        return $this->getTotal($splitNumbers);
-    }
-
-    private function split(string $numbers, array $delimiters): array
-    {
-        $splitNumbers[] = $numbers;
-
-        foreach ($delimiters as $delimiter) {
-            for ($i=0; $i < count($splitNumbers); $i++) {
-                $piece = array_shift($splitNumbers);
-
-                if ($delimiter === "") {
-                    $splitNumbers = array_merge($splitNumbers, str_split($piece));
-                } else {
-                    $splitNumbers = array_merge($splitNumbers, explode($delimiter, $piece));
-                }
-            }
-        }
-
-        return $splitNumbers;
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function getTotal(array $numbers): int
+    private function operate(array $numbers): int
     {
         $total = 0;
 
-        $numbers = array_map("intval", $numbers);
         $this->checkNegatives($numbers);
         foreach ($numbers as $number) {
             if ($number <= self::MAX_NUMBER_ALLOWED) {

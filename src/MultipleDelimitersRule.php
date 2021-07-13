@@ -5,23 +5,25 @@ namespace Deg540\StringCalculatorPHP;
 class MultipleDelimitersRule implements IDelimitersRule
 {
     private Delimiters $delimiters;
+    private ProcessedString $processedString;
     private int $delimiterStartPosition;
     private int $delimiterEndPosition;
     private int $delimiterLength;
 
     public function __construct()
     {
+        $this->processedString = new ProcessedString();
         $this->delimiters = new Delimiters();
     }
 
-    public function extractDelimiters(string $string): array
+    public function extractDelimiters(string $string): ProcessedString
     {
         if ($this->isMultipleCharacterDelimiter($string)) {
             $this->delimiters->delete();
             $this->addDelimiters($string);
         }
 
-        return $this->delimiters->toArray();
+        return $this->processedString;
     }
 
     private function isMultipleCharacterDelimiter(string $string): bool
@@ -37,7 +39,8 @@ class MultipleDelimitersRule implements IDelimitersRule
             $string = substr($string, $this->delimiterEndPosition);
             $this->calculatePositions($string);
         }
-        $this->delimiters->add($string);
+        $this->processedString->setDelimiters($this->delimiters);
+        $this->processedString->processNumbers($string);
     }
 
     private function calculatePositions($string): void
