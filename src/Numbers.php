@@ -26,9 +26,29 @@ class Numbers {
     /**
      * @return int[]
      */
-    public function toIntArray(): array
+    public function getNumbers(): array
     {
         rsort($this->numbers);
         return $this->numbers;
+    }
+
+    public function hasNegatives(): bool
+    {
+        return !empty($this->getNegatives());
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getNegatives(): array
+    {
+        $negatives = [];
+        foreach ($this->getNumbers() as $number) {
+            if ($number < 0) {
+                $negatives[] = $number;
+            }
+        }
+
+        return $negatives;
     }
 }

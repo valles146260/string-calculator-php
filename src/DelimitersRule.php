@@ -9,8 +9,8 @@ abstract class DelimitersRule
     protected function extractNumbersByDelimiters(Delimiters $delimiters, string $string): Numbers
     {
         $numbers[] = $string;
-        foreach ($delimiters->toStringArray() as $delimiter) {
-            for ($i=0; $i < count($numbers); $i++) {
+        foreach ($delimiters->getDelimiters() as $delimiter) {
+            foreach ($numbers as $number) {
                 $piece = array_shift($numbers);
 
                 if ($delimiter === "") {

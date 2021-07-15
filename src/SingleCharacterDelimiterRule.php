@@ -2,11 +2,11 @@
 
 namespace Deg540\StringCalculatorPHP;
 
-class SingleDelimiterRule extends DelimitersRule
+class SingleCharacterDelimiterRule extends DelimitersRule
 {
     public function extractNumbers(string $string): ?Numbers
     {
-        if ($this->isSingleCharacterDelimiter($string)) {
+        if ($this->hasSingleCharacterDelimiter($string)) {
             $delimiters = new Delimiters();
             $delimiters->add($this->extractDelimiter($string));
             $string = $this->extractNumbersString($string);
@@ -16,7 +16,7 @@ class SingleDelimiterRule extends DelimitersRule
         return null;
     }
 
-    private function isSingleCharacterDelimiter(string $string): bool
+    private function hasSingleCharacterDelimiter(string $string): bool
     {
         return preg_match("/\/\/.\n.*/", $string);
     }

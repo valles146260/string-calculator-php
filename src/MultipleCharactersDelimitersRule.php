@@ -2,7 +2,7 @@
 
 namespace Deg540\StringCalculatorPHP;
 
-class MultipleDelimitersRule extends DelimitersRule
+class MultipleCharactersDelimitersRule extends DelimitersRule
 {
     private int $delimiterStartPosition;
     private int $delimiterEndPosition;
@@ -10,7 +10,7 @@ class MultipleDelimitersRule extends DelimitersRule
 
     public function extractNumbers(string $string): ?Numbers
     {
-        if ($this->isMultipleCharacterDelimiter($string)) {
+        if ($this->hasMultipleCharacterDelimiter($string)) {
             $delimiters = new Delimiters($this->extractDelimiters($string));
             $string = $this->extractNumbersString($string);
             return $this->extractNumbersByDelimiters($delimiters, $string);
@@ -19,7 +19,7 @@ class MultipleDelimitersRule extends DelimitersRule
         return null;
     }
 
-    private function isMultipleCharacterDelimiter(string $string): bool
+    private function hasMultipleCharacterDelimiter(string $string): bool
     {
         return preg_match("/\/\/(\[[^]]*\])*\n.*/", $string);
     }

@@ -9,7 +9,7 @@ class MaxNumberRule implements NumbersRule
     public function checkNumbers(Numbers $numbers): Numbers
     {
         $checkedNumbers = new Numbers();
-        foreach ($numbers->toIntArray() as $number) {
+        foreach ($numbers->getNumbers() as $number) {
             if ($number <= self::MAX_NUMBER_ALLOWED) {
                 $checkedNumbers->add($number);
             }

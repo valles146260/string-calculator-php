@@ -11,14 +11,8 @@ class NoNegativesRule implements NumbersRule
      */
     public function checkNumbers(Numbers $numbers): Numbers
     {
-        $negatives = [];
-        foreach ($numbers->toIntArray() as $number) {
-            if ($number < 0) {
-                $negatives[] = $number;
-            }
-        }
-        if (count($negatives)) {
-            throw new Exception("Negativos no soportados: " . implode(", ", $negatives));
+        if ($numbers->hasNegatives()) {
+            throw new Exception("Negativos no soportados: " . implode(", ", $numbers->getNegatives()));
         }
 
         return $numbers;

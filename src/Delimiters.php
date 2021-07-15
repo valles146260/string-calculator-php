@@ -26,7 +26,7 @@ class Delimiters {
     /**
      * @return string[]
      */
-    public function toStringArray(): array
+    public function getDelimiters(): array
     {
         return $this->delimiters;
     }

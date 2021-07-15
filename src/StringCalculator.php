@@ -19,9 +19,9 @@ class StringCalculator
     public function __construct()
     {
         $this->delimitersRules = [
-            new NoDelimiterRule(),
-            new SingleDelimiterRule(),
-            new MultipleDelimitersRule()
+            new DefaultDelimitersRule(),
+            new SingleCharacterDelimiterRule(),
+            new MultipleCharactersDelimitersRule()
         ];
         $this->numbersRules = [
             new NoNegativesRule(),
@@ -41,9 +41,9 @@ class StringCalculator
         $numbers = new Numbers();
         foreach ($this->delimitersRules as $delimitersRule)
         {
-            $extractedNumbers = $delimitersRule->extractNumbers($numbersString);
-            if (!empty($extractedNumbers)) {
-                $numbers = $extractedNumbers;
+            $numbers = $delimitersRule->extractNumbers($numbersString);
+            if (!empty($numbers)) {
+                break;
             }
         }
         foreach ($this->numbersRules as $numbersRule)
@@ -57,7 +57,7 @@ class StringCalculator
     private function addNumbers(Numbers $numbers): int
     {
         $total = 0;
-        foreach ($numbers->toIntArray() as $number) {
+        foreach ($numbers->getNumbers() as $number) {
             $total += $number;
         }
 
