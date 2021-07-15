@@ -2,28 +2,21 @@
 
 namespace Deg540\StringCalculatorPHP;
 
-class MultipleDelimitersRule implements IDelimitersRule
+class MultipleDelimitersRule extends DelimitersRule
 {
-    private Delimiters $delimiters;
-    private ProcessedString $processedString;
     private int $delimiterStartPosition;
     private int $delimiterEndPosition;
     private int $delimiterLength;
 
-    public function __construct()
-    {
-        $this->processedString = new ProcessedString();
-        $this->delimiters = new Delimiters();
-    }
-
-    public function extractDelimiters(string $string): ProcessedString
+    public function extractNumbers(string $string): ?Numbers
     {
         if ($this->isMultipleCharacterDelimiter($string)) {
-            $this->delimiters->delete();
-            $this->addDelimiters($string);
+            $delimiters = new Delimiters($this->extractDelimiters($string));
+            $string = $this->extractNumbersString($string);
+            return $this->extractNumbersByDelimiters($delimiters, $string);
         }
 
-        return $this->processedString;
+        return null;
     }
 
     private function isMultipleCharacterDelimiter(string $string): bool
@@ -31,16 +24,29 @@ class MultipleDelimitersRule implements IDelimitersRule
         return preg_match("/\/\/(\[[^]]*\])*\n.*/", $string);
     }
 
-    private function addDelimiters(string $string): void
+    /**
+     * @return string[]
+     */
+    private function extractDelimiters(string $string): array
     {
+        $delimiters = [];
         $this->calculatePositions($string);
         while ($this->delimiterEndPosition !== -1) {
-            $this->delimiters->add(substr($string, $this->delimiterStartPosition, $this->delimiterLength));
+            $delimiters[] = substr($string, $this->delimiterStartPosition, $this->delimiterLength);
             $string = substr($string, $this->delimiterEndPosition);
             $this->calculatePositions($string);
         }
-        $this->processedString->setDelimiters($this->delimiters);
-        $this->processedString->processNumbers($string);
+        return $delimiters;
+    }
+
+    private function extractNumbersString(string $string): string
+    {
+        $this->calculateEndPosition($string);
+        while ($this->delimiterEndPosition !== -1) {
+            $string = substr($string, $this->delimiterEndPosition);
+            $this->calculateEndPosition($string);
+        }
+        return $string;
     }
 
     private function calculatePositions($string): void

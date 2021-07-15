@@ -1,18 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deg540\StringCalculatorPHP;
 
-class Numbers
-{
-    private array $numbers = [];
+class Numbers {
+    /**
+     * @var int[]
+     */
+    private array $numbers;
 
-    public function create(array $numbers): void
+    /**
+     * @param int[] $numbers
+     */
+    public function __construct(array $numbers = [])
     {
         $this->numbers = $numbers;
     }
 
-    public function toArrayOfIntegers(): array
+    public function add(int $number): void
     {
-        return array_map("intval", $this->numbers);
+        $this->numbers[] = $number;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function toIntArray(): array
+    {
+        rsort($this->numbers);
+        return $this->numbers;
     }
 }

@@ -6,61 +6,61 @@ use Exception;
 
 class StringCalculator
 {
-    const MAX_NUMBER_ALLOWED = 1000;
+    /**
+     * @var DelimitersRule[]
+     */
+    private array $delimitersRules;
+
+    /**
+     * @var NumbersRule[]
+     */
+    private array $numbersRules;
+
+    public function __construct()
+    {
+        $this->delimitersRules = [
+            new NoDelimiterRule(),
+            new SingleDelimiterRule(),
+            new MultipleDelimitersRule()
+        ];
+        $this->numbersRules = [
+            new NoNegativesRule(),
+            new MaxNumberRule()
+        ];
+    }
 
     /**
      * @throws Exception
      */
-    public function add(string $numbers): int
+    public function add(string $numbersString): int
     {
-        if (empty($numbers)) {
+        if (empty($numbersString)) {
             return 0;
         }
-        $processedString= $this->extractDelimiters($numbers);
-        $numbers = $processedString->getNumbers()->toArrayOfIntegers();
 
-        return $this->operate($numbers);
+        $numbers = new Numbers();
+        foreach ($this->delimitersRules as $delimitersRule)
+        {
+            $extractedNumbers = $delimitersRule->extractNumbers($numbersString);
+            if (!empty($extractedNumbers)) {
+                $numbers = $extractedNumbers;
+            }
+        }
+        foreach ($this->numbersRules as $numbersRule)
+        {
+            $numbers = $numbersRule->checkNumbers($numbers);
+        }
+
+        return $this->addNumbers($numbers);
     }
 
-    private function extractDelimiters(string $string): ProcessedString
-    {
-        $delimitersCalculator = new RulesDelimitersCalculator();
-
-        return $delimitersCalculator->processString($string);
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function operate(array $numbers): int
+    private function addNumbers(Numbers $numbers): int
     {
         $total = 0;
-
-        $this->checkNegatives($numbers);
-        foreach ($numbers as $number) {
-            if ($number <= self::MAX_NUMBER_ALLOWED) {
-                $total += $number;
-            }
+        foreach ($numbers->toIntArray() as $number) {
+            $total += $number;
         }
 
         return $total;
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function checkNegatives(array $numbers): void
-    {
-        $negatives = [];
-
-        foreach ($numbers as $number) {
-            if ($number < 0) {
-                $negatives[] = $number;
-            }
-        }
-
-        if (count($negatives)) {
-            throw new Exception("Negativos no soportados: " . implode(", ", $negatives));
-        }
     }
 }

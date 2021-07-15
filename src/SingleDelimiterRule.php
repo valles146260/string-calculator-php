@@ -2,20 +2,18 @@
 
 namespace Deg540\StringCalculatorPHP;
 
-class SingleDelimiterRule implements IDelimitersRule
+class SingleDelimiterRule extends DelimitersRule
 {
-    public function extractDelimiters(string $string): ProcessedString
+    public function extractNumbers(string $string): ?Numbers
     {
-        $processedString = new ProcessedString();
-        $delimiters = new Delimiters();
         if ($this->isSingleCharacterDelimiter($string)) {
-            $delimiters->delete();
+            $delimiters = new Delimiters();
             $delimiters->add($this->extractDelimiter($string));
-            $processedString->setDelimiters($delimiters);
-            $processedString->processNumbers($this->extractNumbers($string));
+            $string = $this->extractNumbersString($string);
+            return $this->extractNumbersByDelimiters($delimiters, $string);
         }
 
-        return $processedString;
+        return null;
     }
 
     private function isSingleCharacterDelimiter(string $string): bool
@@ -28,7 +26,7 @@ class SingleDelimiterRule implements IDelimitersRule
         return substr($string, 2, 1);
     }
 
-    private function extractNumbers(string $string): string
+    private function extractNumbersString(string $string): string
     {
         return substr($string, 4);
     }
