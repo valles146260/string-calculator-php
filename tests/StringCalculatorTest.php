@@ -9,16 +9,23 @@ use PHPUnit\Framework\TestCase;
 
 final class StringCalculatorTest extends TestCase
 {
+
+    private StringCalculator $stringCalculator;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->stringCalculator = new StringCalculator();
+    }
+
+
     /**
      * @test
      */
     public function givenEmptyStringReturnsZero()
     {
-        $stringCalculator = new StringCalculator();
-
-        $result = $stringCalculator->add("");
-
-        $this->assertEquals(0, $result);
+        $this->assertEquals(0, $this->stringCalculator->add(""));
     }
 
     /**
@@ -26,11 +33,7 @@ final class StringCalculatorTest extends TestCase
      */
     public function givenTwoNumbersReturnsSum()
     {
-        $stringCalculator = new StringCalculator();
-
-        $result = $stringCalculator->add("1,2");
-
-        $this->assertEquals(3, $result);
+        $this->assertEquals(3, $this->stringCalculator->add("1,2"));
     }
 
     /**
@@ -38,11 +41,15 @@ final class StringCalculatorTest extends TestCase
      */
     public function givenOneNumberReturnsNumber()
     {
-        $stringCalculator = new StringCalculator();
+        #ANTES
+        #$stringCalculator = new StringCalculator();
 
-        $result = $stringCalculator->add("1");
+        #$result = $stringCalculator->add("1");
 
-        $this->assertEquals(1, $result);
+        #$this->assertEquals(1, $result);
+
+        #DESPUES
+        $this->assertEquals(1, $this->stringCalculator->add("1"));
     }
 
     /**
@@ -53,11 +60,7 @@ final class StringCalculatorTest extends TestCase
      */
     public function givenMoreThanOneNumberReturnsSum()
     {
-        $stringCalculator = new StringCalculator();
-
-        $result = $stringCalculator->add("1,2,3");
-
-        $this->assertEquals(6, $result);
+        $this->assertEquals(6, $this->stringCalculator->add("1,2,3"));
     }
 
     /**
@@ -65,11 +68,7 @@ final class StringCalculatorTest extends TestCase
      */
     public function givenMoreThanOneNumberWithLineBreakReturnsSum()
     {
-        $stringCalculator = new StringCalculator();
-
-        $result = $stringCalculator->add("1\n2,3");
-
-        $this->assertEquals(6, $result);
+        $this->assertEquals(6, $this->stringCalculator->add("1\n2,3"));
     }
 
 
